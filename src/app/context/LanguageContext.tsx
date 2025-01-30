@@ -1,14 +1,22 @@
 'use client';
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { translations } from '../translations';
 
 type Language = 'ru' | 'en';
+type TranslationType = typeof translations.ru;
+type NestedKeyOf<T> = T extends object ? {
+  [K in keyof T]: K extends string
+    ? T[K] extends object
+      ? `${K}.${NestedKeyOf<T[K]>}`
+      : K
+    : never
+}[keyof T] : never;
 
 interface LanguageContextType {
   language: Language;
   toggleLanguage: () => void;
-  t: (key: string) => string;
+  t: (key: NestedKeyOf<TranslationType>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -16,26 +24,33 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>('ru');
 
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') as Language;
+    if (savedLanguage) {
+      setLanguage(savedLanguage);
+    }
+  }, []);
+
   const toggleLanguage = () => {
-    console.log('Current language:', language);
     setLanguage(prev => {
       const newLang = prev === 'ru' ? 'en' : 'ru';
-      console.log('New language:', newLang);
+      localStorage.setItem('language', newLang);
       return newLang;
     });
   };
 
-  // Функция для получения перевода по ключу
-  const t = (key: string) => {
+  const t = (key: NestedKeyOf<TranslationType>) => {
     const keys = key.split('.');
-    let value: any = translations[language];
+    let value: unknown = translations[language];
     
     for (const k of keys) {
+      if (typeof value === 'object' && value !== null) {
+        value = value[k as keyof typeof value];
+      }
       if (value === undefined) return key;
-      value = value[k];
     }
     
-    return value || key;
+    return typeof value === 'string' ? value : key;
   };
 
   return (

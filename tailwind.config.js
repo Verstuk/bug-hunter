@@ -15,7 +15,10 @@ module.exports = {
           text: '#E0E0E0',
           border: '#2E2E2E'
         }
-      }
+      },
+      fontFamily: {
+        sans: ['var(--font-fira)', 'sans-serif'],
+      },
     },
   },
   plugins: [],
