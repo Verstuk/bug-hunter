@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import { Sun, Moon, Globe } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useLanguage } from '../context/LanguageContext';
-import { smoothScrollTo } from '../utils/smoothScroll';
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

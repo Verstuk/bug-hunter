@@ -4,19 +4,12 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { translations } from '../translations';
 
 type Language = 'ru' | 'en';
-type TranslationType = typeof translations.ru;
-type NestedKeyOf<T> = T extends object ? {
-  [K in keyof T]: K extends string
-    ? T[K] extends object
-      ? `${K}.${NestedKeyOf<T[K]>}`
-      : K
-    : never
-}[keyof T] : never;
+type TranslationValue = string | Record<string, unknown>;
 
 interface LanguageContextType {
   language: Language;
   toggleLanguage: () => void;
-  t: (key: NestedKeyOf<TranslationType>) => string;
+  t: (key: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -39,16 +32,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const t = (key: string) => {
+  const t = (key: string): string => {
     const keys = key.split('.');
-    let value: any = translations[language];
+    let value: TranslationValue = translations[language];
     
     for (const k of keys) {
       if (value === undefined) return key;
-      value = value[k];
+      value = (value as Record<string, TranslationValue>)[k];
     }
     
-    return value || key;
+    return typeof value === 'string' ? value : key;
   };
 
   return (
