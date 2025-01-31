@@ -45,17 +45,25 @@ const Header = () => {
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
-    const sectionId = href.replace('#', '');
     
-    // Анимация закрытия меню
+    // Закрываем мобильное меню если оно открыто
     if (isMenuOpen) {
       setIsMenuOpen(false);
     }
 
-    // Плавная прокрутка с задержкой для анимации меню
+    // Добавляем небольшую задержку для мобильного меню
     setTimeout(() => {
-      smoothScrollTo(href);
-      setActiveSection(sectionId);
+      const element = document.querySelector(href);
+      if (element) {
+        const headerHeight = 80;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }, isMenuOpen ? 300 : 0);
   };
 
@@ -139,7 +147,7 @@ const Header = () => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              <div className="flex flex-col items-center gap-6 pt-8">
+              <div className="flex flex-col items-center gap-6 pt-8 pb-10 bg-white/95 dark:bg-dark-bg/95">
                 {navItems.map((item, index) => {
                   const isActive = activeSection === item.href.replace('#', '');
                   return (

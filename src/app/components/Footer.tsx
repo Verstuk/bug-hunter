@@ -28,7 +28,7 @@ export const Footer = () => {
 
   const backgroundVariants = {
     animate: {
-      backgroundPosition: ['0% 0%', '100% 100%'],
+      x: ["0%", "100%"],
       transition: {
         duration: 20,
         ease: "linear",

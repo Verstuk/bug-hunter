@@ -116,12 +116,7 @@ export const Hero = () => {
             >
               {t('hero.buttons.contact')}
             </Link>
-            <Link 
-              href="/portfolio" 
-              className="px-6 py-3 border rounded-full hover:bg-gray-50 transition-colors text-center"
-            >
-              {t('hero.buttons.portfolio')}
-            </Link>
+          
           </motion.div>
 
           <motion.div 
